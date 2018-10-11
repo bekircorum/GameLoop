@@ -6,18 +6,25 @@
 
 using namespace std;
 
+#define EXPIRE_TIME 10
+
 void doWork()
 {
-    boost::this_thread::sleep(boost::posix_time::seconds(5));
-    cout << "\t do work " << endl;
+    boost::this_thread::sleep(boost::posix_time::seconds(2));
+    cout << "Do Work! " << endl;
+}
+
+void render(){
+    cout << "\t Render" << endl;
 }
 
 int main()
 {
 
     bool isWorking = true;
+    int loopCount = 0;
 
-    cout << "Program started : " << TimeUtils::getCurrentDate() << endl;
+    cout << "Program started : " << TimeUtils::getCurrentTime()  << "\n" << endl;
 
     timer *t = new timer();
     t->start();
@@ -25,12 +32,15 @@ int main()
     while (isWorking)
     {
         doWork();
-        t->reset();
+        render();
+         
+        cout << "Loop " << loopCount << " ends."<< endl;
+        loopCount++;
 
-        if(t->isOver(100000))
-            isWorking = false;
-            
-        cout << "Iteration " << TimeUtils::getCurrentDate() << endl;
+        if(!t->isOver(EXPIRE_TIME)){
+             cout << "Timer expired! Program exiting.. " << TimeUtils::getCurrentTime() << endl;
+             isWorking = false;
+         }
     }
 
     t->stop();

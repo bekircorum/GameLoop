@@ -3,6 +3,8 @@
 #include "boost/date_time/posix_time/posix_time.hpp"
 #include <boost/timer.hpp>
 
+using namespace std;
+
 namespace pt = boost::posix_time;
 
 class timer {
@@ -12,7 +14,7 @@ class timer {
 		void              stop();
 		void              reset();
 		bool          	  isRunning();
-		unsigned long		  getTime();
+		unsigned long	  getTime();
 		bool              isOver(unsigned long seconds);
 	private:
 		bool              resetted;
