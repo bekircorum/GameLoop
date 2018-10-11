@@ -16,6 +16,7 @@ class timer {
 		bool          	  isRunning();
 		unsigned long	  getTime();
 		bool              isOver(unsigned long seconds);
+		pt::ptime 		  getBegTime() const { return beg; }
 	private:
 		bool              resetted;
 		bool              running;

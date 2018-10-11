@@ -2,6 +2,11 @@
     "files.associations": {
         "ostream": "cpp",
         "bitset": "cpp",
-        "optional": "cpp"
+        "optional": "cpp",
+        "array": "cpp",
+        "*.tcc": "cpp",
+        "istream": "cpp",
+        "tuple": "cpp",
+        "utility": "cpp"
     }
 }

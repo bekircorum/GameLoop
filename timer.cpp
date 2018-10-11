@@ -52,6 +52,5 @@ unsigned long timer::getTime() {
 }
 
 bool timer::isOver(unsigned long seconds) {
-	
-	 return seconds * 1000000 >= getTime();
+	 return seconds * 1000000 <= getTime();
 }
