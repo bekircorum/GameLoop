@@ -1,88 +1,59 @@
 #include <iostream>
-#include <unistd.h>
 #include "timer.h"
-#include <boost/thread/thread.hpp>
 #include "TimeUtils.cpp"
+#include "ThreadUtils.h"
 
 using namespace std;
 
 #define LOOP_TIME 5
+#define DO_WORK_TIME 3
 #define GAME_TIME 23
 #define LAG_UPDATE_INTERVAL 1
 
 void doWork(int loopCount)
 {
-
-    double workTime = 2;
-    if(loopCount == 3) {
-        workTime = 8;
-        cout << "Do HEAVY Work! " << endl;
-    } else {
-        workTime = 2;
-        cout << "Do Work! " << endl;
-    }
-
-    boost::this_thread::sleep(boost::posix_time::seconds(workTime));
+    cout << "Do Work! " << loopCount << endl;
+    thread_sleep( (DO_WORK_TIME) * 1000);
 }
 
 void render(){
     cout << "\t Render" << endl;
 }
 
-void sleepMilliSecond(unsigned long miliseconds){
-    boost::this_thread::sleep(boost::posix_time::millisec(miliseconds) );
-}
 
 int main()
 {
     bool isWorking = true;
     int loopCount = 0;
 
-    cout << "Program started : " << TimeUtils::getCurrentTime()  << "\n" << endl;
+    cout << "Program started \n" << endl;
 
     timer *t = new timer();
-    t->start();
-
-    timer *gameTimer = new timer();
-    gameTimer-> start();
-
+    
     while (isWorking)
     {
-        doWork(loopCount);
+        t->start();
+        doWork(loopCount++);
+        t->stop();
+
+        cout <<"loop timer "  << t->getTimePassed() << endl;
 
         if(t->isOver(LOOP_TIME)){
-            cout << "Slow loop detected!";
-            unsigned long timeIterated = 0;
-            pt::time_duration diff = TimeUtils::getCurrentTime() - t->getBegTime();
-            unsigned long timeToIterate = diff.total_milliseconds();
-            cout << "TimeToIterate="  << timeToIterate << endl;
-            while(timeToIterate  >= timeIterated ){
-               cout << "Iterate slow loop to cathc up!" << endl;
-                
-                doWork(loopCount);
-                timeIterated = diff.total_milliseconds() + LAG_UPDATE_INTERVAL * 1000; 
-
-                cout << " diff=" << diff.total_milliseconds() << " timeIterated=" << timeIterated << endl;  
-            }
+            thread_sleep( (LOOP_TIME-t->getTimePassed()) * 1000);
         }
 
         render();
-         
-        cout << "Loop " << loopCount << " ends."<< endl;
-        loopCount++;
-
-        t->reset();
-
-        if(gameTimer-> isOver(GAME_TIME)){
+            
+        if(loopCount > 5 ){
             isWorking = false;
+            cout << "Game exiting..."  << endl;
         }
     }
 
     t->stop();
-    gameTimer-> stop();
 
-    delete t,gameTimer;
-    t=gameTimer = NULL;
+    delete t;
+    t = NULL;
 
     return 0;
 }
